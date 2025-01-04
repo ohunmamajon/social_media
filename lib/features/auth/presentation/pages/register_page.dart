@@ -3,7 +3,10 @@ import 'package:social_media/features/auth/presentation/components/my_button.dar
 import 'package:social_media/features/auth/presentation/components/my_text_field.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+
+ final void Function()? togglePages;
+
+  const RegisterPage({super.key, required this.togglePages});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -79,10 +82,24 @@ class _RegisterPageState extends State<RegisterPage> {
              const SizedBox(height: 50),
 
                 // already a member? login now
-                Text("Already a member? Login now", 
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                ),),
+               Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already a member?", 
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),),
+
+                     GestureDetector(
+                      onTap: widget.togglePages,
+                       child: Text(" Login now", 
+                                           style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                        fontWeight: FontWeight.bold,
+                                           ),),
+                     ),
+                  ],
+                ),
                 
               ],
             ),
