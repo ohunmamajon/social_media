@@ -41,9 +41,19 @@ class MyDrawer extends StatelessWidget {
                   icon: Icons.person,
                   title: "P R O F I L E",
                   onTap: () {
+                    // pop menu drawer
                     Navigator.of(context).pop();
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const ProfilePage()));
+
+                    // get current user id
+                    final user = context.read<AuthCubit>().currentUser;
+                    String? uid = user!.uid;
+                    // navigate to profile page
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage(
+                                  uid: uid,
+                                )));
                   }),
 
 // search tile
@@ -58,9 +68,9 @@ class MyDrawer extends StatelessWidget {
 
               // logout tile
               MyDrawerTile(
-                  icon: Icons.login, title: "L O G O U T", onTap: () =>  context.read<AuthCubit>().logout()),
-
-
+                  icon: Icons.login,
+                  title: "L O G O U T",
+                  onTap: () => context.read<AuthCubit>().logout()),
             ],
           ),
         ),

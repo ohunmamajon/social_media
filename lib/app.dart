@@ -5,20 +5,25 @@ import 'package:social_media/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:social_media/features/auth/presentation/cubits/auth_states.dart';
 import 'package:social_media/features/auth/presentation/pages/auth_page.dart';
 import 'package:social_media/features/home/presentation/pages/home_page.dart';
+import 'package:social_media/features/profile/data/firebase_profile_repo.dart';
+import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media/themes/light_mode.dart';
 
 class MyApp extends StatelessWidget {
 // auth repo
   final authRepo = FirebaseAuthRepo();
+  final profileRepo = FirebaseProfileRepo();
 
   MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
-      child: MaterialApp(
+    return MultiBlocProvider(providers: [
+      BlocProvider<AuthCubit>(create: (context) => AuthCubit(authRepo: authRepo)..checkAuth() ),
+      BlocProvider<ProfileCubit>(create: (context) => ProfileCubit(profileRepo: profileRepo) )
+    ], child: 
+    MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: lightMode,
         home: BlocConsumer<AuthCubit, AuthState>(

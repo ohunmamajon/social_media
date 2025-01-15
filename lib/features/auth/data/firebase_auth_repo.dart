@@ -29,7 +29,7 @@ class FirebaseAuthRepo implements AuthRepo {
   @override
   Future<AppUser?> registerWithEmailPassword(
       String name, String email, String password) async {
-    // TODO: implement registerWithEmailPassword
+    // implement register With Email Password
     try {
       // atempt sign up
       UserCredential userCredential = await firebaseAuth
