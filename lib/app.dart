@@ -5,6 +5,8 @@ import 'package:social_media/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:social_media/features/auth/presentation/cubits/auth_states.dart';
 import 'package:social_media/features/auth/presentation/pages/auth_page.dart';
 import 'package:social_media/features/home/presentation/pages/home_page.dart';
+import 'package:social_media/features/post/data/firebase_post_repository.dart';
+import 'package:social_media/features/post/presentation/cubits/post_cubit.dart';
 import 'package:social_media/features/profile/data/firebase_profile_repo.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media/features/storage/data/firebase_storage_repo.dart';
@@ -15,17 +17,25 @@ class MyApp extends StatelessWidget {
   final firebaseAuthRepo = FirebaseAuthRepo();
   final firebaseProfileRepo = FirebaseProfileRepo();
   final firebaseStorageRepo = FirebaseStorageRepo();
+  final firebasePostRepo = FirebasePostRepository();
 
   MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider<AuthCubit>(create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth() ),
-      BlocProvider<ProfileCubit>(create: (context) => ProfileCubit(profileRepo: firebaseProfileRepo, storageRepo: firebaseStorageRepo) )
-    ], child: 
-    MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>(
+            create: (context) =>
+                AuthCubit(authRepo: firebaseAuthRepo)..checkAuth()),
+        BlocProvider<ProfileCubit>(
+            create: (context) => ProfileCubit(
+                profileRepo: firebaseProfileRepo,
+                storageRepo: firebaseStorageRepo)),
+                BlocProvider<PostCubit>(create: (context) => PostCubit(postRepo: firebasePostRepo, storageRepo: firebaseStorageRepo) )
+      ],
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: lightMode,
         home: BlocConsumer<AuthCubit, AuthState>(
@@ -48,7 +58,8 @@ class MyApp extends StatelessWidget {
           },
           listener: (context, authState) {
             if (authState is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authState.message)));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(authState.message)));
             }
           },
         ),

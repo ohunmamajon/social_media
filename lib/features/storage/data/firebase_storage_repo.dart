@@ -9,16 +9,26 @@ class FirebaseStorageRepo implements StorageRepo {
 
   @override
   Future<String?> uploadProfileImageMobile(String path, String fileName) {
-    // TODO: implement uploadProfileImageMobile
     return _uploadFile(path, fileName, "profile_images");
   }
 
   @override
   Future<String?> uploadProfileImageWeb(Uint8List fileBytes, String fileName) {
-    // TODO: implement uploadProfileImageWeb
     return _uploadFileBytes(fileBytes, fileName, "profile_images");
   }
 
+  
+
+ @override
+  Future<String?> uploadPostImageMobile(String path, String fileName) {
+    return _uploadFile(path, fileName, "post_images");
+  }
+
+  @override
+  Future<String?> uploadPostImageWeb(Uint8List fileBytes, String fileName) {
+    return _uploadFileBytes(fileBytes, fileName, "post_images");
+  }
+  
   /*
 HELPER METHODS - to upload files to storage
   */
@@ -63,4 +73,6 @@ HELPER METHODS - to upload files to storage
       return null;
     }
   }
+  
+
 }
