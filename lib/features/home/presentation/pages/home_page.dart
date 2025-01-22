@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media/features/home/presentation/components/my_drawer.dart';
-import 'package:social_media/features/home/presentation/components/post_tile.dart';
+import 'package:social_media/features/post/presentation/components/post_tile.dart';
 import 'package:social_media/features/post/presentation/cubits/post_cubit.dart';
 import 'package:social_media/features/post/presentation/cubits/post_states.dart';
 import 'package:social_media/features/profile/presentation/pages/upload_post_page.dart';
@@ -16,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final postCubit = context.read<PostCubit>();
+
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                   final post = allPosts[index];
 
                   //image
-                  return PostTile(post: post);
+                  return PostTile(post: post, onDeletePressed: () => deletePost(post.id),);
                 });
           }
 

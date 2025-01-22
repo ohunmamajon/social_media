@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media/features/profile/domain/repos/profile_repo.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_states.dart';
 import 'package:social_media/features/storage/domain/storage_repo.dart';
@@ -12,7 +13,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.profileRepo, required this.storageRepo})
       : super(ProfileInitial());
 
-  // fetch user profile using repo
+  // fetch user profile using repo -> useful for loading single profile pages
   Future<void> fetchUserProfile(uid) async {
     try {
       emit(ProfileLoading());
@@ -25,6 +26,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
+  }
+
+  // return user profile given uid -> useful for loading many profiles for posts
+
+  Future<ProfileUser?> getUserProfile(String uid) async {
+    final user = await profileRepo.fetchUserProfile(uid);
+    return user;
   }
 
   // update bio and/or profile picture
@@ -62,11 +70,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
 
       // update new profile
-      final updatedProfile =
-          currentUser.copyWith(
-            newBio: newBio ?? currentUser.bio, 
-            newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl
-            );
+      final updatedProfile = currentUser.copyWith(
+          newBio: newBio ?? currentUser.bio,
+          newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl);
 
 //update in repo
       await profileRepo.updateProfile(updatedProfile);
