@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_media/features/post/domain/entities/comment.dart';
 
 class Post {
   final String id;
@@ -7,7 +8,8 @@ class Post {
   final String text;
   final String imageUrl;
   final DateTime timeStamp;
-  final List<String> likes;  // store uids
+  final List<String> likes;
+  final List<Comment> comments; // store uids
 
   Post(
       {required this.id,
@@ -16,8 +18,8 @@ class Post {
       required this.text,
       required this.imageUrl,
       required this.timeStamp,
-      required this.likes
-      });
+      required this.likes,
+      required this.comments});
 
   Post copyWith({String? imageUrl}) {
     return Post(
@@ -27,8 +29,8 @@ class Post {
         text: text,
         imageUrl: imageUrl ?? this.imageUrl,
         timeStamp: timeStamp,
-        likes: likes
-        );
+        likes: likes,
+        comments: comments);
   }
 
   Map<String, dynamic> toJson() {
@@ -39,11 +41,17 @@ class Post {
       'text': text,
       'imageUrl': imageUrl,
       'timestamp': Timestamp.fromDate(timeStamp),
-      'likes': likes
+      'likes': likes,
+      'comments': comments.map((comment) => comment.toJson()).toList()
     };
   }
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    final List<Comment> comments = (json['comments'] as List<dynamic>?)
+            ?.map((commentsJson) => Comment.fromJson(commentsJson))
+            .toList() ??
+        [];
+
     return Post(
         id: json['id'],
         userId: json['userId'],
@@ -51,7 +59,8 @@ class Post {
         text: json['text'],
         imageUrl: json['imageUrl'],
         timeStamp: (json['timestamp'] as Timestamp).toDate(),
-        likes: List<String>.from(json['likes'] ?? [])
+        likes: List<String>.from(json['likes'] ?? []),
+        comments: comments
         );
   }
 }
