@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media/features/auth/domain/entities/app_user.dart';
 import 'package:social_media/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:social_media/features/post/presentation/components/post_tile.dart';
+import 'package:social_media/features/post/presentation/cubits/post_cubit.dart';
+import 'package:social_media/features/post/presentation/cubits/post_states.dart';
 import 'package:social_media/features/profile/presentation/components/bio_box.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_states.dart';
@@ -25,6 +28,9 @@ class _ProfilePageState extends State<ProfilePage> {
   // current user
   late AppUser? currentUser = authCubit.currentUser;
 
+  // post count
+  int postCount = 0;
+
   // on startup
   @override
   void initState() {
@@ -40,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (state is ProfileLoaded) {
         // get loaded user
         final user = state.profileUser;
-        
+
         // App Bar
         return Scaffold(
           appBar: AppBar(
@@ -48,69 +54,125 @@ class _ProfilePageState extends State<ProfilePage> {
             foregroundColor: Theme.of(context).colorScheme.primary,
             actions: [
               // edit profile button
-              IconButton(onPressed: () => Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => EditProfilePage(user: user))), 
-              icon: const Icon(Icons.settings))
+              IconButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfilePage(user: user))),
+                  icon: const Icon(Icons.settings))
             ],
           ),
 
           // Body
-          body:  Column(children: [
-            Text(user.email, style: TextStyle(color: Theme.of(context).colorScheme.primary),),
-          
-          const SizedBox(height: 25,),
+          body: ListView(
+            children: [
+              Center(
+                child: Text(
+                  user.email,
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                ),
+              ),
 
-            // profile pic
-           CachedNetworkImage(
-imageUrl: user.profileImageUrl,
+              const SizedBox(
+                height: 25,
+              ),
+
+              // profile pic
+              CachedNetworkImage(
+                imageUrl: user.profileImageUrl,
 
 //loading...
-placeholder: (context, url) => const CircularProgressIndicator(),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
 
 // error -> failed to load
-errorWidget: (context, url, error) =>  Icon(
- Icons.person,
- size: 72,
-  color: Theme.of(context).colorScheme.primary,
-),
-//loaded
-imageBuilder: (context, imageProvider) => Container(
-  height: 120,
-  width: 120,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    image: DecorationImage(image: imageProvider,
-    fit: BoxFit.cover
-    )
-  )
-),
-),
-          
-          const SizedBox(height: 25,),
-          
-                // bio box
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: Row( children: [
-                    Text("Bio", style: TextStyle(color: Theme.of(context).colorScheme.primary),)
-                  ],),
+                errorWidget: (context, url, error) => Icon(
+                  Icons.person,
+                  size: 72,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
+//loaded
+                imageBuilder: (context, imageProvider) => Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover))),
+              ),
 
-                     const SizedBox(height: 25,),
-                     
+              const SizedBox(
+                height: 25,
+              ),
+
+              // bio box
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Bio",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    )
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                height: 25,
+              ),
+
               BioBox(text: user.bio),
 
               // posts
               Padding(
-                  padding: const EdgeInsets.only(left: 25.0, top: 25.0),
-                  child: Row( children: [
-                    Text("Posts", style: TextStyle(color: Theme.of(context).colorScheme.primary),)
-                  ],),
+                padding: const EdgeInsets.only(left: 25.0, top: 25.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Posts",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    )
+                  ],
                 ),
-          ],),
-        );  
+              ),
+
+             const SizedBox(
+                height: 10,
+              ),
+            
+              // list of posts from user
+              BlocBuilder<PostCubit, PostState>(builder: (context, state) {
+                if (state is PostLoaded) {
+                  // filter posts by user id
+                  final userPosts = state.posts
+                      .where((post) => post.userId == widget.uid)
+                      .toList();
+                  postCount = userPosts.length;
+                  return ListView.builder(
+                      itemCount: postCount,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final post = userPosts[index];
+                        return PostTile(
+                            post: post,
+                            onDeletePressed: () =>
+                                context.read<PostCubit>().deletePost(post.id));
+                      });
+                } else if (state is PostLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } 
+                
+                else { return const Center(child: Text("No posts..")); }
+              })
+            ],
+          ),
+        );
       }
-        // Body 
+      // Body
       // loading..
       else if (state is ProfileLoading) {
         return const Scaffold(
