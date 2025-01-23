@@ -7,9 +7,12 @@ import 'package:social_media/features/post/presentation/components/post_tile.dar
 import 'package:social_media/features/post/presentation/cubits/post_cubit.dart';
 import 'package:social_media/features/post/presentation/cubits/post_states.dart';
 import 'package:social_media/features/profile/presentation/components/bio_box.dart';
+import 'package:social_media/features/profile/presentation/components/follow_button.dart';
+import 'package:social_media/features/profile/presentation/components/profile_stats.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_states.dart';
 import 'package:social_media/features/profile/presentation/pages/edit_profile_page.dart';
+import 'package:social_media/features/profile/presentation/pages/follower_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -39,8 +42,45 @@ class _ProfilePageState extends State<ProfilePage> {
     profileCubit.fetchUserProfile(widget.uid);
   }
 
+  void followButtonPressed() {
+    final profileState = profileCubit.state;
+    if (profileState is! ProfileLoaded) {
+      return;
+    }
+    final profileUser = profileState.profileUser;
+    final isFollowing = profileUser.followers.contains(currentUser!.uid);
+
+    // optimistically update UI
+    setState(() {
+      // unfollow
+      if (isFollowing) {
+        profileUser.followers.remove(currentUser!.uid);
+      }
+      // follow
+      else {
+        profileUser.followers.add(currentUser!.uid);
+      }
+    });
+
+    profileCubit.toggleFollow(currentUser!.uid, widget.uid).catchError((error) {
+       // revert changes
+       setState(() {
+      // unfollow
+      if (isFollowing) {
+        profileUser.followers.add(currentUser!.uid);
+      }
+      // follow
+      else {
+        profileUser.followers.remove(currentUser!.uid);
+      }
+    });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isOwnPost = (widget.uid == currentUser!.uid);
+
     return BlocBuilder<ProfileCubit, ProfileState>(builder: (context, state) {
       // loaded
       if (state is ProfileLoaded) {
@@ -54,12 +94,13 @@ class _ProfilePageState extends State<ProfilePage> {
             foregroundColor: Theme.of(context).colorScheme.primary,
             actions: [
               // edit profile button
-              IconButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditProfilePage(user: user))),
-                  icon: const Icon(Icons.settings))
+              if (isOwnPost)
+                IconButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProfilePage(user: user))),
+                    icon: const Icon(Icons.settings))
             ],
           ),
 
@@ -69,7 +110,8 @@ class _ProfilePageState extends State<ProfilePage> {
               Center(
                 child: Text(
                   user.email,
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
 
@@ -100,6 +142,24 @@ class _ProfilePageState extends State<ProfilePage> {
                         image: DecorationImage(
                             image: imageProvider, fit: BoxFit.cover))),
               ),
+
+              const SizedBox(
+                height: 25,
+              ),
+
+              // profile stats
+              ProfileStats(postCount: postCount, followerCount: user.followers.length, followingCount: user.following.length, onTap: () => Navigator.push(context, MaterialPageRoute(
+                builder: (context) => FollowerPage(followers: user.followers, following: user.following))),),
+
+               const SizedBox(
+                height: 25,
+              ),
+
+              // follow/unfollow
+              if (!isOwnPost)
+                FollowButton(
+                    followPressed: followButtonPressed,
+                    isFollowing: user.followers.contains(currentUser!.uid)),
 
               const SizedBox(
                 height: 25,
@@ -139,10 +199,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-             const SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-            
+
               // list of posts from user
               BlocBuilder<PostCubit, PostState>(builder: (context, state) {
                 if (state is PostLoaded) {
@@ -164,9 +224,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       });
                 } else if (state is PostLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } 
-                
-                else { return const Center(child: Text("No posts..")); }
+                } else {
+                  return const Center(child: Text("No posts.."));
+                }
               })
             ],
           ),
