@@ -12,6 +12,7 @@ import 'package:social_media/features/auth/presentation/components/my_text_field
 import 'package:social_media/features/profile/domain/entities/profile_user.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media/features/profile/presentation/cubits/profile_states.dart';
+import 'package:social_media/responsive/constrained_scaffold.dart';
 
 class EditProfilePage extends StatefulWidget {
   final ProfileUser user;
@@ -73,7 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return BlocConsumer<ProfileCubit, ProfileState>(builder: (cotext, state) {
       // profile loading
       if (state is ProfileLoading) {
-        return const Scaffold(
+        return const ConstrainedScaffold(
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -1,1 +1,45 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"socialapp-beae3","appId":"1:1005084329151:android:2b07b0d915319b3bdfb20a","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"socialapp-beae3","appId":"1:1005084329151:ios:ba5fbd0c527c4eb0dfb20a","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"socialapp-beae3","configurations":{"android":"1:1005084329151:android:2b07b0d915319b3bdfb20a","ios":"1:1005084329151:ios:ba5fbd0c527c4eb0dfb20a","web":"1:1005084329151:web:1e2da1b24bf583d3dfb20a"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "socialapp-beae3",
+          "appId": "1:1005084329151:android:2b07b0d915319b3bdfb20a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "socialapp-beae3",
+          "appId": "1:1005084329151:ios:ba5fbd0c527c4eb0dfb20a",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "socialapp-beae3",
+          "configurations": {
+            "android": "1:1005084329151:android:2b07b0d915319b3bdfb20a",
+            "ios": "1:1005084329151:ios:ba5fbd0c527c4eb0dfb20a",
+            "web": "1:1005084329151:web:1e2da1b24bf583d3dfb20a"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

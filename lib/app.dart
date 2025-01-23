@@ -12,7 +12,7 @@ import 'package:social_media/features/profile/presentation/cubits/profile_cubit.
 import 'package:social_media/features/search/data/firebase_search_repo.dart';
 import 'package:social_media/features/search/presentation/cubits/search_cubit.dart';
 import 'package:social_media/features/storage/data/firebase_storage_repo.dart';
-import 'package:social_media/themes/light_mode.dart';
+import 'package:social_media/themes/theme_cubit.dart';
 
 class MyApp extends StatelessWidget {
 // auth repo
@@ -40,11 +40,17 @@ class MyApp extends StatelessWidget {
             create: (context) => PostCubit(
                 postRepo: firebasePostRepo, storageRepo: firebaseStorageRepo)),
            BlocProvider<SearchCubit>(
-            create: (context) => SearchCubit(searchRepo: firebaseSearchRepo))
+            create: (context) => SearchCubit(searchRepo: firebaseSearchRepo)),
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit())
       ],
-      child: MaterialApp(
+
+      // bloc builder: themes
+      child: BlocBuilder<ThemeCubit, ThemeData>(
+        builder: (context, currentTheme) =>  MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: lightMode,
+        theme: currentTheme,
+
+        // bloc builder: check current auth state
         home: BlocConsumer<AuthCubit, AuthState>(
           builder: (context, authState) {
             if (authState is Unauthenticated) {
@@ -70,7 +76,9 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
-      ),
+      ), 
+        
+        )
     );
   }
 }

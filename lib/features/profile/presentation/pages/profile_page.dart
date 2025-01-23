@@ -13,6 +13,7 @@ import 'package:social_media/features/profile/presentation/cubits/profile_cubit.
 import 'package:social_media/features/profile/presentation/cubits/profile_states.dart';
 import 'package:social_media/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:social_media/features/profile/presentation/pages/follower_page.dart';
+import 'package:social_media/responsive/constrained_scaffold.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -87,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final user = state.profileUser;
 
         // App Bar
-        return Scaffold(
+        return ConstrainedScaffold(
           appBar: AppBar(
             title: Text(user.name),
             foregroundColor: Theme.of(context).colorScheme.primary,
