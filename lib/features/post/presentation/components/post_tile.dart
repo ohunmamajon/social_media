@@ -39,7 +39,6 @@ class _PostTileState extends State<PostTile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
     fetchPostUser();

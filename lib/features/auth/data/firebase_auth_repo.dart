@@ -60,13 +60,11 @@ class FirebaseAuthRepo implements AuthRepo {
 
   @override
   Future<void> logout() async {
-    // TODO: implement logout
     await firebaseAuth.signOut();
   }
 
   @override
   Future<AppUser?> getCurrentUser() async {
-    // TODO: implement getCurrentUser
     final firebaseUser = firebaseAuth.currentUser;
     if (firebaseUser == null) {
       return null;

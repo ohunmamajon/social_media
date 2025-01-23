@@ -35,6 +35,7 @@ class ProfileUser extends AppUser {
   }
 
   // convert profile user -> Json
+
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,

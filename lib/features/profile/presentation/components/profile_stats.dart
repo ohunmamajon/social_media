@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_media/features/profile/presentation/cubits/profile_cubit.dart';
+
 
 class ProfileStats extends StatelessWidget {
   final int postCount;

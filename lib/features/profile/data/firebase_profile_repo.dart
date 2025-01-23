@@ -34,7 +34,6 @@ class FirebaseProfileRepo implements ProfileRepo {
 
   @override
   Future<void> updateProfile(ProfileUser updateProfile) async {
-    // TODO: implement updateProfile
     try {
       // convert updated profile to json to store in firestore
       await firebaseFirestore
@@ -85,6 +84,8 @@ class FirebaseProfileRepo implements ProfileRepo {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

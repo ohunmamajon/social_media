@@ -37,7 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
   // on startup
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     profileCubit.fetchUserProfile(widget.uid);
   }

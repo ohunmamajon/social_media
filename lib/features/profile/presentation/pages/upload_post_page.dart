@@ -34,7 +34,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCurrentUser();
   }
@@ -97,7 +96,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     textControler.dispose();
     super.dispose();
   }
